@@ -5,7 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Time exposing (Time, every, second, millisecond)
 import Random
-import Exts.Float exposing (roundTo)
+import FormatNumber exposing (formatFloat, formatInt, usLocale)
 
 
 main : Program Never Model Msg
@@ -46,7 +46,7 @@ init = (updateModel {
     funds = 0
     , clips = 0
     , inventory = 0
-    , price = 0.30
+    , price = 0.25
     , wires = 1000
     , wirePrice = 15
     , wireOrderSize = 500
@@ -89,7 +89,7 @@ view : Model -> Html Msg
 view model =
     div [] [
         h1 [] [
-            text ( "Clips " ++ (toString model.clips) )
+            text ( "Clips " ++ (formatInt usLocale model.clips) )
             ]
         , div [] [
             button [ onClick CreateClip, disabled (model.wires < 1) ] [ text "Make a clip" ]
@@ -100,9 +100,7 @@ view model =
             ]
             , div [] [
                 span [] [
-                    text ( "Available Funds: $ " ++ ( model.funds
-                                                     |> roundTo 2
-                                                     |> toString ))
+                    text ( "Available Funds: $ " ++ ( formatFloat usLocale model.funds ))
                 ]
             ]
 --            , div [] [
@@ -125,9 +123,7 @@ view model =
                 , button [ onClick RaisePrice ] [ text "Raise" ]
                 , span [] [
                     text ( " Price per Clip: $ "
-                        ++ (model.price
-                            |> roundTo 2
-                            |> toString )
+                        ++ ( formatFloat usLocale model.price )
                         )
                 ]
             ]
