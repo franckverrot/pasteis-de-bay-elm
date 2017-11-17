@@ -71,11 +71,7 @@ update msg model =
                     (model, Cmd.none)
                 else
                     ({ model | wires = model.wires + model.wireOrderSize, funds = model.funds - wirePrice}, Cmd.none)
-        LowerPrice ->
-            if model.price <= 0.01 then
-                (model, Cmd.none)
-            else
-                ({ model | price = model.price - 0.01} |> updateModel, Cmd.none)
+        LowerPrice -> ({ model | price = (Basics.max (model.price - 0.01) 0.01)} |> updateModel, Cmd.none)
         RaisePrice -> ({ model | price = model.price + 0.01} |> updateModel, Cmd.none)
         Tick newTime -> ( model , Random.generate SellClips (Random.float 0 100) )
         SellClips rand -> (sellClips model rand, Cmd.none)
