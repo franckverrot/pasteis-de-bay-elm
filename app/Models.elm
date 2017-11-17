@@ -3,6 +3,10 @@ module Models exposing (..)
 import Material
 import Time exposing (Time)
 
+type alias ClipperModule = {
+    cost: Float
+    , boost: Int
+    }
 type alias Model = {
     mdl : Material.Model
     , funds : Float
@@ -18,9 +22,7 @@ type alias Model = {
     , demandBoost : Int
     , marketingLvl : Int
     , marketingEffectiveness : Int
-    , clipperActivated : Bool
-    , clipperCost : Float
-    , clipperBoost : Int
+    , clipperModule : Maybe ClipperModule
     , clipmakerLevel : Int
     , megaClipperActivated : Bool
     , megaClipperBoost : Int

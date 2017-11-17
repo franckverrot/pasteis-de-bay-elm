@@ -43,9 +43,7 @@ init = (updateModel {
     , demandBoost = 1
     , marketingLvl = 1
     , marketingEffectiveness = 1
-    , clipperActivated = False
-    , clipperCost = 5.0
-    , clipperBoost = 1
+    , clipperModule = Nothing
     , clipmakerLevel = 0
     , megaClipperActivated = False
     , megaClipperBoost = 1
@@ -94,11 +92,14 @@ update msg model =
             )
         SellClips rand -> (sellClips model rand, Cmd.none)
         AdjustwireCost rand -> (adjustwireCost model rand, Cmd.none)
-        BuyClipper -> ({model |
-            clipmakerLevel = model.clipmakerLevel + 1
-            , funds = model.funds - model.clipperCost
-            }
-            |> updateModel, Cmd.none)
+        BuyClipper ->
+          case model.clipperModule of
+            Nothing -> (model, Cmd.none)
+            Just mod ->
+              { model | clipmakerLevel = model.clipmakerLevel + 1
+                      , funds = model.funds - mod.cost
+              }
+              |> flip (,) Cmd.none
         UpdateModel -> (updateModel model, Cmd.none)
         Mdl msg_ ->
             Material.update Mdl msg_ model
@@ -133,20 +134,31 @@ view model =
     ]
     |> Material.Scheme.top
 
+tryMakeClipperModule : Model -> Maybe ClipperModule
+tryMakeClipperModule model =
+  case model.clipperModule of
+    Just mod -> Just mod
+    Nothing ->
+      let
+          enoughFunds = model.funds >= 5
+          clipperCost = (1.1 ^ (toFloat model.clipmakerLevel)) + 4
+      in
+          case enoughFunds of
+            False -> Nothing
+            True -> Just { cost = (1.1 ^ (toFloat model.clipmakerLevel)) + 4
+                         , boost = 1
+                         }
 
 updateModel : Model -> Model
 updateModel model =
     let
         marketing = (1.1 ^ toFloat (model.marketingLvl - 1))
         demand = (( (0.8 / model.price) * marketing * toFloat model.marketingEffectiveness ) *  (toFloat model.demandBoost) * 1.1)
-        clipperActivated = model.clipperActivated || model.funds >= 5
-        clipperCost = (1.1 ^ (toFloat model.clipmakerLevel)) + 4
         megaClipperCost = (1.07 ^ (toFloat model.megaClipperLevel)) * 1000
     in
         { model |
         demand = demand
-        , clipperActivated = clipperActivated
-        , clipperCost = clipperCost
+        , clipperModule = (tryMakeClipperModule model)
         , megaClipperCost = megaClipperCost
         }
 
@@ -184,18 +196,21 @@ adjustwireCost model rand =
 
 makeClips : Model -> Model
 makeClips model =
-    let
-        autoClipperAmount = (toFloat (model.clipperBoost * model.clipmakerLevel)) / 10
-        megaClipperAmount = toFloat (model.megaClipperBoost * model.megaClipperLevel) * 0.5
-        partalClips = model.partialClips + autoClipperAmount + megaClipperAmount
-        fullClips = Basics.min (floor partalClips) model.wires
-        clipmakerRate = (autoClipperAmount + megaClipperAmount) * 10
-    in
-        {
-            model
-            | partialClips = partalClips - (toFloat fullClips)
-            , inventory = model.inventory + fullClips
-            , clips = model.clips + fullClips
-            , wires = model.wires - fullClips
-            , clipmakerRate = clipmakerRate
-        }
+  case model.clipperModule of
+    Nothing -> model
+    Just mod ->
+      let
+          autoClipperAmount = (toFloat (mod.boost * model.clipmakerLevel)) / 10
+          megaClipperAmount = toFloat (model.megaClipperBoost * model.megaClipperLevel) * 0.5
+          partalClips = model.partialClips + autoClipperAmount + megaClipperAmount
+          fullClips = Basics.min (floor partalClips) model.wires
+          clipmakerRate = (autoClipperAmount + megaClipperAmount) * 10
+      in
+          {
+              model
+              | partialClips = partalClips - (toFloat fullClips)
+              , inventory = model.inventory + fullClips
+              , clips = model.clips + fullClips
+              , wires = model.wires - fullClips
+              , clipmakerRate = clipmakerRate
+          }

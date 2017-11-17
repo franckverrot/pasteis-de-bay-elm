@@ -28,23 +28,23 @@ manufacturingView model =
         , div [] [
             text ( "Cost: $ " ++ (toString model.wireCost) )
         ]
-        , (clipper model) |> Maybe.withDefault (text "")
+        , clipperView model
     ]
 
-clipper : Model -> Maybe (Html Msg)
-clipper model =
-    if (model.clipperActivated) then
-        Just (div [] [
-            br [] []
-            , div [] [
-                button [ onClick BuyClipper, disabled (model.funds < model.clipperCost) ] [ text "AutoClippers" ]
-                , span [] [
-                    text ( " " ++ (toString model.clipmakerLevel) )
-                ]
-            ]
-            , div [] [
-                text ( "Cost: $ " ++ (formatFloat usLocale model.clipperCost) )
-            ]
-        ])
-    else
-        Nothing
+clipperView : Model -> Html Msg
+clipperView model =
+  case model.clipperModule of
+    Nothing -> text ""
+    Just mod ->
+      div [] [
+         br [] []
+         , div [] [
+             button [ onClick BuyClipper, disabled (model.funds < mod.cost) ] [ text "AutoClippers" ]
+             , span [] [
+                 text ( " " ++ (toString model.clipmakerLevel) )
+             ]
+         ]
+         , div [] [
+             text ( "Cost: $ " ++ (formatFloat usLocale mod.cost) )
+         ]
+      ]
