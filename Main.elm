@@ -6,7 +6,9 @@ import Html.Events exposing (..)
 import Time exposing (Time, every, second, millisecond)
 import Random
 import FormatNumber exposing (formatFloat, formatInt, usLocale)
-
+import Models exposing (..)
+import Utils exposing (..)
+import Business exposing (businessView)
 
 main : Program Never Model Msg
 main = 
@@ -16,30 +18,6 @@ main =
         , subscriptions = subscriptions
         , view = view
         }
-
-
-type alias Model = {
-    funds: Float
-    , clips : Int
-    , inventory : Int
-    , price : Float
-    , wires : Int
-    , wirePrice : Int
-    , wireOrderSize : Int
-    , demand : Float
-    , demandBoost : Int
-    , marketingLvl : Int
-    , marketingEffectiveness : Int
-    }
-
-type Msg =
-    CreateClip
-    | BuyWires
-    | LowerPrice
-    | RaisePrice
-    | Tick Time
-    | SellClips Float
-    | UpdateModel
 
 init : (Model, Cmd Msg)
 init = (updateModel {
@@ -94,45 +72,7 @@ view model =
         , div [] [
             button [ onClick CreateClip, disabled (model.wires < 1) ] [ text "Make a clip" ]
         ]
-        , div [] [
-            div [] [
-                h2 [] [ text "Business" ]
-            ]
-            , div [] [
-                span [] [
-                    text ( "Available Funds: $ " ++ ( formatFloat usLocale model.funds ))
-                ]
-            ]
---            , div [] [
---                span [] [
---                    text ( "Avg. Rev. per sec: $ " ++ (toString model.clips) )
---                ]
---            ]
---            , div [] [
---                span [] [
---                    text ( "Avg. Clips Sold per sec: " ++ (toString model.clips) )
---                ]
---            ]
-            , div [] [
-                span [] [
-                    text ( "Unsold Inventory: " ++ (toString model.inventory) )
-                ]
-            ]
-            , div [] [
-                button [ onClick LowerPrice ] [ text "Lower" ]
-                , button [ onClick RaisePrice ] [ text "Raise" ]
-                , span [] [
-                    text ( " Price per Clip: $ "
-                        ++ ( formatFloat usLocale model.price )
-                        )
-                ]
-            ]
-            , div [] [
-                span [] [
-                    text ( "Public demand: " ++ (demandPercentage model.demand) ++ "%")
-                ]
-            ]
-        ]
+        , businessView model
         , div [] [
             div [] [
                 h2 [] [ text "Manufacturing" ]
@@ -175,9 +115,3 @@ sellClips model rand =
             { model | inventory = 0, funds = model.funds + (model.price * (toFloat model.inventory)) }
         else
             { model | inventory = model.inventory - demand, funds = model.funds + (model.price * (toFloat demand)) }
-
-
-demandPercentage: Float -> String
-demandPercentage demand = demand * 10
-                          |> round
-                          |> toString
