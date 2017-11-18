@@ -9,9 +9,9 @@ type alias Model = {
     , inventory : Int
     , price : Float
     , wires : Int
+    , wireSupply : Int
     , wireCost : Int
     , wireBasePrice : Float
-    , wireOrderSize : Int
     , demand : Float
     , demandBoost : Int
     , marketingLvl : Int
@@ -20,6 +20,7 @@ type alias Model = {
     , clipperCost : Float
     , clipperBoost : Int
     , clipmakerLevel : Int
+    , megaClipperActivated : Bool
     , megaClipperBoost : Int
     , megaClipperLevel : Int
     , megaClipperCost : Float

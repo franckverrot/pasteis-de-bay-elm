@@ -22,7 +22,7 @@ manufacturingView model =
         , div [] [
             button [ onClick BuyWires, disabled (model.funds < (toFloat model.wireCost)) ] [ text "Wire" ]
             , span [] [
-                text ( " " ++ (toString model.wires) ++ " Inches" )
+                text ( " " ++ (toString model.wires) ++ " inches" )
             ]
         ]
         , div [] [

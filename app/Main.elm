@@ -28,9 +28,9 @@ init = (updateModel {
     , inventory = 0
     , price = 0.25
     , wires = 1000
+    , wireSupply = 1000
     , wireCost = 15
     , wireBasePrice = 15
-    , wireOrderSize = 500
     , demand = 3
     , demandBoost = 1
     , marketingLvl = 1
@@ -39,6 +39,7 @@ init = (updateModel {
     , clipperCost = 5.0
     , clipperBoost = 1
     , clipmakerLevel = 0
+    , megaClipperActivated = False
     , megaClipperBoost = 1
     , megaClipperLevel = 0
     , megaClipperCost = 500.0
@@ -60,7 +61,11 @@ update msg model =
                 if (model.funds < wireCost) then
                     (model, Cmd.none)
                 else
-                    ({ model | wires = model.wires + model.wireOrderSize, funds = model.funds - wireCost}, Cmd.none)
+                    ({ model
+                    | wires = model.wires + model.wireSupply
+                    , funds = model.funds - wireCost
+                    , wireBasePrice = model.wireBasePrice + 0.05
+                    }, Cmd.none)
         LowerPrice -> ({ model
             | price = (Basics.max (model.price - 0.01) 0.01)}
             |> updateModel
@@ -84,7 +89,6 @@ update msg model =
         BuyClipper -> ({model |
             clipmakerLevel = model.clipmakerLevel + 1
             , funds = model.funds - model.clipperCost
-            , wireBasePrice = model.wireBasePrice + 0.05
             }
             |> updateModel, Cmd.none)
         UpdateModel -> (updateModel model, Cmd.none)
@@ -133,7 +137,7 @@ sellClips model rand =
     let
         demand = floor ( 0.7 * (model.demand ^ 1.15))
     in
-        if (rand > model.demand) then
+        if (rand > model.demand || model.inventory == 0) then
             model
         else if (demand > model.inventory) then
             { model
