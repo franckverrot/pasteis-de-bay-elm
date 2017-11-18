@@ -3,13 +3,20 @@ module Main exposing (main)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Material
+import Material.Scheme
+import Material.Button as Button
+import Material.Options as Options
 import Time exposing (Time, every, second, millisecond)
 import Random
 import FormatNumber exposing (formatFloat, formatInt, usLocale)
+
+
 import Models exposing (..)
 import Utils exposing (..)
 import Business exposing (..)
 import Manufacturing exposing (..)
+
 
 main : Program Never Model Msg
 main = 
@@ -22,7 +29,8 @@ main =
 
 init : (Model, Cmd Msg)
 init = (updateModel {
-    funds = 0
+    mdl = Material.model
+    , funds = 0
     , clips = 0
     , partialClips = 0
     , inventory = 0
@@ -92,6 +100,8 @@ update msg model =
             }
             |> updateModel, Cmd.none)
         UpdateModel -> (updateModel model, Cmd.none)
+        Mdl msg_ ->
+            Material.update Mdl msg_ model
 
 
 subscriptions : Model -> Sub Msg
@@ -108,11 +118,20 @@ view model =
             text ( "Clips " ++ (formatInt usLocale model.clips) )
             ]
         , div [] [
-            button [ onClick CreateClip, disabled (model.wires < 1) ] [ text "Make a clip" ]
+            Button.render Mdl
+                        [ 0 ]
+                        model.mdl
+                        [ Button.raised
+                        , Button.ripple
+                        , Options.onClick CreateClip
+                        , Options.disabled (model.wires < 1)
+                        ]
+                        [ text "Make a clip" ]
         ]
         , businessView model
         , manufacturingView model
     ]
+    |> Material.Scheme.top
 
 
 updateModel : Model -> Model

@@ -1,9 +1,11 @@
 module Models exposing (..)
 
+import Material
 import Time exposing (Time)
 
 type alias Model = {
-    funds: Float
+    mdl : Material.Model
+    , funds : Float
     , clips : Int
     , partialClips : Float
     , inventory : Int
@@ -29,7 +31,8 @@ type alias Model = {
 
 
 type Msg =
-    CreateClip
+    Mdl (Material.Msg Msg)
+    | CreateClip
     | BuyWires
     | LowerPrice
     | RaisePrice
