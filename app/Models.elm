@@ -6,7 +6,15 @@ import Time exposing (Time)
 type alias ClipperModule = {
     cost: Float
     , boost: Int
+    , level: Int
     }
+
+type alias MegaClipperModule = {
+    cost: Float
+    , boost: Int
+    , level: Int
+    }
+
 type alias Model = {
     mdl : Material.Model
     , funds : Float
@@ -23,11 +31,7 @@ type alias Model = {
     , marketingLvl : Int
     , marketingEffectiveness : Int
     , clipperModule : Maybe ClipperModule
-    , clipmakerLevel : Int
-    , megaClipperActivated : Bool
-    , megaClipperBoost : Int
-    , megaClipperLevel : Int
-    , megaClipperCost : Float
+    , megaClipperModule : Maybe MegaClipperModule
     , clipmakerRate: Float
     }
 
@@ -43,3 +47,4 @@ type Msg =
     | AdjustwireCost Float
     | UpdateModel
     | BuyClipper
+    | BuyMegaClipper

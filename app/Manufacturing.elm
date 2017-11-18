@@ -41,7 +41,25 @@ clipperView model =
          , div [] [
              button [ onClick BuyClipper, disabled (model.funds < mod.cost) ] [ text "AutoClippers" ]
              , span [] [
-                 text ( " " ++ (toString model.clipmakerLevel) )
+                 text ( " " ++ (toString mod.level) )
+             ]
+         ]
+         , div [] [
+             text ( "Cost: $ " ++ (formatFloat usLocale mod.cost) )
+         ]
+      ]
+
+megaClipperView : Model -> Html Msg
+megaClipperView model =
+  case model.megaClipperModule of
+    Nothing -> text ""
+    Just mod ->
+      div [] [
+         br [] []
+         , div [] [
+             button [ onClick BuyMegaClipper, disabled (model.funds < mod.cost) ] [ text "MegaClippers" ]
+             , span [] [
+                 text ( " " ++ (toString mod.level) )
              ]
          ]
          , div [] [
