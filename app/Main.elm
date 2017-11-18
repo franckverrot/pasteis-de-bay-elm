@@ -143,7 +143,7 @@ tryMakeClipperModule model =
   case model.clipperModule of
     Just mod ->
       let
-        clipperCost = (1.1 ^ (toFloat mod.level)) + 5
+        clipperCost = (1.1 ^ (toFloat mod.level)) + 4
       in
         Just {mod | cost = clipperCost}
     Nothing ->
@@ -152,7 +152,7 @@ tryMakeClipperModule model =
       in
           case enoughFunds of
             False -> Nothing
-            True -> Just { cost = 5.0
+            True -> Just { cost = 5
                          , boost = 1
                          , level = 0
                          }
@@ -230,21 +230,28 @@ adjustwireCost model rand =
 
 makeClips : Model -> Model
 makeClips model =
-  let
-      autoClipperAmount = runClippers model.clipperModule
-      megaClipperAmount = runMegaClippers model.megaClipperModule
-      partalClips = model.partialClips + autoClipperAmount + megaClipperAmount
-      fullClips = Basics.min (floor partalClips) model.wires
-      clipmakerRate = (autoClipperAmount + megaClipperAmount) * 10
-  in
-      {
-          model
-          | partialClips = partalClips - (toFloat fullClips)
-          , inventory = model.inventory + fullClips
-          , clips = model.clips + fullClips
-          , wires = model.wires - fullClips
-          , clipmakerRate = clipmakerRate
-      }
+    case model.wires of
+        0 -> { model
+            | clipmakerRate = 0
+            , partialClips = 0
+            }
+        _ ->
+          let
+              autoClipperAmount = runClippers model.clipperModule
+              megaClipperAmount = runMegaClippers model.megaClipperModule
+              partialClipsCapacity = model.partialClips + autoClipperAmount + megaClipperAmount
+              fullClipsCapacity = floor partialClipsCapacity
+              clipmakerRate = (Basics.min (autoClipperAmount + megaClipperAmount) (toFloat model.wires)) * 10
+              fullClips = Basics.min fullClipsCapacity model.wires
+          in
+              {
+                  model
+                  | partialClips = partialClipsCapacity - (toFloat fullClipsCapacity)
+                  , inventory = model.inventory + fullClips
+                  , clips = model.clips + fullClips
+                  , wires = model.wires - fullClips
+                  , clipmakerRate = clipmakerRate
+              }
 
 runClippers : Maybe ClipperModule -> Float
 runClippers model =
