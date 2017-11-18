@@ -20,7 +20,7 @@ manufacturingView model =
         ]
         , br [] []
         , div [] [
-            button [ onClick BuyWires, disabled (model.funds < (toFloat model.wireCost)) ] [ text "Wire" ]
+            button [ onClick BuyWires, disabled (model.businessModule.funds < (toFloat model.wireCost)) ] [ text "Wire" ]
             , span [] [
                 text ( " " ++ (toString model.wires) ++ " inches" )
             ]
@@ -39,7 +39,7 @@ clipperView model =
       div [] [
          br [] []
          , div [] [
-             button [ onClick BuyClipper, disabled (model.funds < mod.cost) ] [ text "AutoClippers" ]
+             button [ onClick BuyClipper, disabled (model.businessModule.funds < mod.cost) ] [ text "AutoClippers" ]
              , span [] [
                  text ( " " ++ (toString mod.level) )
              ]
@@ -57,7 +57,7 @@ megaClipperView model =
       div [] [
          br [] []
          , div [] [
-             button [ onClick BuyMegaClipper, disabled (model.funds < mod.cost) ] [ text "MegaClippers" ]
+             button [ onClick BuyMegaClipper, disabled (model.businessModule.funds < mod.cost) ] [ text "MegaClippers" ]
              , span [] [
                  text ( " " ++ (toString mod.level) )
              ]

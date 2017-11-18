@@ -14,7 +14,7 @@ import FormatNumber exposing (formatFloat, formatInt, usLocale)
 
 import Models exposing (..)
 import Utils exposing (..)
-import Business exposing (..)
+import Business as Business
 import Manufacturing exposing (..)
 
 
@@ -30,19 +30,13 @@ main =
 init : (Model, Cmd Msg)
 init = (updateModel {
     mdl = Material.model
-    , funds = 0
+    , businessModule = Business.init
     , clips = 0
     , partialClips = 0
-    , inventory = 0
-    , price = 0.25
     , wires = 1000
     , wireSupply = 1000
     , wireCost = 15
     , wireBasePrice = 15
-    , demand = 3
-    , demandBoost = 1
-    , marketingLvl = 1
-    , marketingEffectiveness = 1
     , clipperModule = Nothing
     , megaClipperModule = Nothing
     , clipmakerRate = 0
@@ -55,26 +49,28 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
         CreateClip -> ({ model
-            | clips = model.clips + 1, inventory = model.inventory + 1, wires = model.wires - 1}, Cmd.none)
+            | clips = model.clips + 1
+            , businessModule = Business.addItems model.businessModule 1
+            , wires = model.wires - 1}, Cmd.none)
         BuyWires ->
             let
                 wireCost = toFloat model.wireCost
             in
-                if (model.funds < wireCost) then
+                if (model.businessModule.funds < wireCost) then
                     (model, Cmd.none)
                 else
                     ({ model
                     | wires = model.wires + model.wireSupply
-                    , funds = model.funds - wireCost
+                    , businessModule = Business.removeFunds model.businessModule wireCost
                     , wireBasePrice = model.wireBasePrice + 0.05
                     }, Cmd.none)
         LowerPrice -> ({ model
-            | price = (Basics.max (model.price - 0.01) 0.01)}
+            | businessModule = Business.lowerPrice model.businessModule}
             |> updateModel
             , Cmd.none
             )
         RaisePrice -> ({ model
-            | price = model.price + 0.01}
+            | businessModule = Business.lowerPrice model.businessModule}
             |> updateModel
             , Cmd.none
             )
@@ -86,14 +82,16 @@ update msg model =
                 , Random.generate AdjustwireCost (Random.float 0 100)
              ]
             )
-        SellClips rand -> (sellClips model rand, Cmd.none)
+        SellClips rand -> ({model
+                            | businessModule = Business.sellClips model.businessModule rand
+                            }, Cmd.none)
         AdjustwireCost rand -> (adjustwireCost model rand, Cmd.none)
         BuyClipper ->
           case model.clipperModule of
             Nothing -> (model, Cmd.none)
             Just mod ->
               { model | clipperModule = addClipper mod
-                      , funds = model.funds - mod.cost
+                      , businessModule = Business.removeFunds model.businessModule mod.cost
               }
               |> flip (,) Cmd.none
         BuyMegaClipper ->
@@ -101,7 +99,7 @@ update msg model =
             Nothing -> (model, Cmd.none)
             Just mod ->
               { model | megaClipperModule = addMegaClipper mod
-                      , funds = model.funds - mod.cost
+                      , businessModule = Business.removeFunds model.businessModule mod.cost
               }
               |> flip (,) Cmd.none
         UpdateModel -> (updateModel model, Cmd.none)
@@ -133,7 +131,7 @@ view model =
                         ]
                         [ text "Make a clip" ]
         ]
-        , businessView model
+        , Business.view model.businessModule
         , manufacturingView model
     ]
     |> Material.Scheme.top
@@ -148,7 +146,7 @@ tryMakeClipperModule model =
         Just {mod | cost = clipperCost}
     Nothing ->
       let
-          enoughFunds = model.funds >= 5
+          enoughFunds = model.businessModule.funds >= 5
       in
           case enoughFunds of
             False -> Nothing
@@ -186,34 +184,11 @@ addMegaClipper model =
 
 updateModel : Model -> Model
 updateModel model =
-    let
-        marketing = (1.1 ^ toFloat (model.marketingLvl - 1))
-        demand = (( (0.8 / model.price) * marketing * toFloat model.marketingEffectiveness ) *  (toFloat model.demandBoost) * 1.1)
-    in
         { model |
-        demand = demand
+        businessModule = Business.updateModel model.businessModule
         , clipperModule = (tryMakeClipperModule model)
         , megaClipperModule = (tryMakeMegaClipperModule model)
         }
-
-
-sellClips : Model -> Float -> Model
-sellClips model rand =
-    let
-        demand = floor ( 0.7 * (model.demand ^ 1.15))
-    in
-        if (rand > model.demand || model.inventory == 0) then
-            model
-        else if (demand > model.inventory) then
-            { model
-            | inventory = 0
-            , funds = model.funds + (model.price * (toFloat model.inventory))
-            }
-        else
-            { model
-            | inventory = model.inventory - demand
-            , funds = model.funds + (model.price * (toFloat demand))
-            }
 
 adjustwireCost : Model -> Float -> Model
 adjustwireCost model rand =
@@ -247,7 +222,7 @@ makeClips model =
               {
                   model
                   | partialClips = partialClipsCapacity - (toFloat fullClipsCapacity)
-                  , inventory = model.inventory + fullClips
+                  , businessModule = Business.addItems model.businessModule fullClips
                   , clips = model.clips + fullClips
                   , wires = model.wires - fullClips
                   , clipmakerRate = clipmakerRate
