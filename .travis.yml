@@ -1,0 +1,16 @@
+sudo: false
+
+cache:
+  directories:
+    - test/elm-stuff/build-artifacts
+
+language: node_js
+
+node_js:
+  - "8.8"
+
+install:
+  - npm install -g elm@0.18 elm-test@0.18
+
+script:
+  - elm make app/Main.elm
