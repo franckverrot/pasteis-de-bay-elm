@@ -13,6 +13,17 @@ type alias BusinessModule = {
     , marketingEffectiveness : Int
     }
 
+type alias ManufacturingModule = {
+    wires : Int
+    , wireSupply : Int
+    , wireCost : Int
+    , wireBasePrice : Float
+    , clipperModule : Maybe ClipperModule
+    , megaClipperModule : Maybe MegaClipperModule
+    , partialClips : Float
+    , clipmakerRate: Float
+    }
+
 type alias ClipperModule = {
     cost: Float
     , boost: Int
@@ -27,16 +38,9 @@ type alias MegaClipperModule = {
 
 type alias Model = {
     mdl : Material.Model
-    , businessModule : BusinessModule
     , clips : Int
-    , partialClips : Float
-    , wires : Int
-    , wireSupply : Int
-    , wireCost : Int
-    , wireBasePrice : Float
-    , clipperModule : Maybe ClipperModule
-    , megaClipperModule : Maybe MegaClipperModule
-    , clipmakerRate: Float
+    , businessModule : BusinessModule
+    , manufacturingModule : ManufacturingModule
     }
 
 type Msg =
