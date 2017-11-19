@@ -148,5 +148,6 @@ buyAds model =
     else
         { model
             | funds = model.funds - toFloat model.marketingCost
+            , marketingCost = model.marketingCost * 2
             , marketingLvl = model.marketingLvl + 1
         }

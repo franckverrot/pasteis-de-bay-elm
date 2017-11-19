@@ -42,6 +42,13 @@ type alias MegaClipperModule =
     }
 
 
+type alias SaveModel =
+    { clips : Int
+    , businessModule : BusinessModule
+    , manufacturingModule : ManufacturingModule
+    }
+
+
 type alias Model =
     { mdl : Material.Model
     , clips : Int

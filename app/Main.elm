@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -16,9 +16,9 @@ import Business as Business
 import Manufacturing as Manufacturing
 
 
-main : Program Never Model Msg
+main : Program (Maybe SaveModel) Model Msg
 main =
-    program
+    programWithFlags
         { init = init
         , update = update
         , subscriptions = subscriptions
@@ -26,16 +26,26 @@ main =
         }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( updateModel
-        { mdl = Material.model
-        , clips = 0
-        , businessModule = Business.init
-        , manufacturingModule = Manufacturing.init
-        }
-    , Cmd.none
-    )
+port saveState : SaveModel -> Cmd msg
+
+
+emptyModel : Model
+emptyModel =
+    { mdl = Material.model
+    , clips = 0
+    , businessModule = Business.init
+    , manufacturingModule = Manufacturing.init
+    }
+
+
+init : Maybe SaveModel -> ( Model, Cmd Msg )
+init savedModel =
+    case savedModel of
+        Nothing ->
+            ( emptyModel, Cmd.none )
+
+        Just mod ->
+            ( updateModel (Utils.saveToModel mod), Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -86,6 +96,7 @@ update msg model =
             , Cmd.batch
                 [ Random.generate SellClips (Random.float 0 100)
                 , Random.generate AdjustwireCost (Random.float 0 100)
+                , saveState (Utils.modelToSave model)
                 ]
             )
 

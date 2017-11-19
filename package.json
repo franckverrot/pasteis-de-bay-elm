@@ -1,0 +1,24 @@
+{
+  "name": "elm-paperclips",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "postinstall": "npm run make",
+    "make": "elm-make app/Main.elm --output=build/elm.js",
+    "start": "npm run make && http-server",
+    "lint": "./node_modules/.bin/elm-lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AshDevFr/elm-paperclip.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AshDevFr/elm-paperclip/issues"
+  },
+  "homepage": "https://github.com/AshDevFr/elm-paperclip#readme",
+  "devDependencies": {
+    "node-elm-lint": "^1.0.0-beta.1"
+  }
+}

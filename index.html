@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Elm Paperclip</title>
+  <script type="text/javascript" src="build/elm.js"></script>
+</head>
+
+<body>
+</body>
+
+<script type="text/javascript">
+  var storedState = localStorage.getItem('elm-paperclip');
+  var startingState = storedState ? JSON.parse(storedState) : null;
+  var mainApp = Elm.Main.fullscreen(startingState);
+  mainApp.ports.saveState.subscribe(function(state) {
+    localStorage.setItem('elm-paperclip', JSON.stringify(state));
+  });
+</script>
+
+</html>
