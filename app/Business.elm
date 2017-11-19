@@ -9,8 +9,8 @@ import FormatNumber exposing (formatFloat, formatInt, usLocale)
 
 
 init : BusinessModule
-init = {
-    funds = 0
+init =
+    { funds = 0
     , inventory = 0
     , price = 0.25
     , demand = 3
@@ -19,104 +19,123 @@ init = {
     , marketingEffectiveness = 1
     }
 
+
 view : BusinessModule -> Html Msg
-view model = div [] [
-         div [] [
-             h2 [] [ text "Business" ]
-         ]
-         , div [] [
-             span [] [
-                 text ( "Available Funds: $ " ++ ( formatFloat usLocale model.funds ))
-             ]
-         ]
---        , div [] [
---            span [] [
---                text ( "Avg. Rev. per sec: $ " ++ (toString model.clips) )
---            ]
---        ]
---        , div [] [
---            span [] [
---                text ( "Avg. Clips Sold per sec: " ++ (toString model.clips) )
---            ]
---        ]
-         , div [] [
-             span [] [
-                 text ( "Unsold Inventory: " ++ (toString model.inventory) )
-             ]
-         ]
-         , div [] [
-             button [ onClick LowerPrice ] [ text "Lower" ]
-             , button [ onClick RaisePrice ] [ text "Raise" ]
-             , span [] [
-                 text ( " Price per Clip: $ "
-                     ++ ( formatFloat usLocale model.price )
-                     )
-             ]
-         ]
-         , div [] [
-             span [] [
-                 text ( "Public demand: " ++ (demandPercentage model.demand) ++ "%")
-             ]
-         ]
-     ]
+view model =
+    div []
+        [ div []
+            [ h2 [] [ text "Business" ]
+            ]
+        , div []
+            [ span []
+                [ text ("Available Funds: $ " ++ (formatFloat usLocale model.funds))
+                ]
+            ]
+
+        --        , div [] [
+        --            span [] [
+        --                text ( "Avg. Rev. per sec: $ " ++ (toString model.clips) )
+        --            ]
+        --        ]
+        --        , div [] [
+        --            span [] [
+        --                text ( "Avg. Clips Sold per sec: " ++ (toString model.clips) )
+        --            ]
+        --        ]
+        , div []
+            [ span []
+                [ text ("Unsold Inventory: " ++ (toString model.inventory))
+                ]
+            ]
+        , div []
+            [ button [ onClick LowerPrice ] [ text "Lower" ]
+            , button [ onClick RaisePrice ] [ text "Raise" ]
+            , span []
+                [ text
+                    (" Price per Clip: $ "
+                        ++ (formatFloat usLocale model.price)
+                    )
+                ]
+            ]
+        , div []
+            [ span []
+                [ text ("Public demand: " ++ (demandPercentage model.demand) ++ "%")
+                ]
+            ]
+        ]
+
 
 updateModel : BusinessModule -> BusinessModule
 updateModel model =
     let
-        marketing = (1.1 ^ toFloat (model.marketingLvl - 1))
-        demand = (( (0.8 / model.price) * marketing * toFloat model.marketingEffectiveness ) *  (toFloat model.demandBoost) * 1.1)
+        marketing =
+            (1.1 ^ toFloat (model.marketingLvl - 1))
+
+        demand =
+            (((0.8 / model.price) * marketing * toFloat model.marketingEffectiveness) * (toFloat model.demandBoost) * 1.1)
     in
-        { model |
-        demand = demand
+        { model
+            | demand = demand
         }
 
+
 lowerPrice : BusinessModule -> BusinessModule
-lowerPrice model = { model
-                     | price = (Basics.max (model.price - 0.01) 0.01)}
+lowerPrice model =
+    { model
+        | price = (Basics.max (model.price - 0.01) 0.01)
+    }
+
 
 raisePrice : BusinessModule -> BusinessModule
-raisePrice model = { model
-                    |price = model.price + 0.01}
+raisePrice model =
+    { model
+        | price = model.price + 0.01
+    }
+
 
 sellClips : BusinessModule -> Float -> BusinessModule
 sellClips model rand =
     let
-        demand = floor ( 0.7 * (model.demand ^ 1.15))
+        demand =
+            floor (0.7 * (model.demand ^ 1.15))
     in
         if (rand > model.demand || model.inventory == 0) then
             model
         else if (demand > model.inventory) then
             { model
-            | inventory = 0
-            , funds = model.funds + (model.price * (toFloat model.inventory))
+                | inventory = 0
+                , funds = model.funds + (model.price * (toFloat model.inventory))
             }
         else
             { model
-            | inventory = model.inventory - demand
-            , funds = model.funds + (model.price * (toFloat demand))
+                | inventory = model.inventory - demand
+                , funds = model.funds + (model.price * (toFloat demand))
             }
+
 
 addFunds : BusinessModule -> Float -> BusinessModule
 addFunds model income =
     { model
-     | funds = model.funds + income
-     }
+        | funds = model.funds + income
+    }
+
 
 removeFunds : BusinessModule -> Float -> BusinessModule
 removeFunds model outcome =
     { model
-     | funds = model.funds - outcome
-     }
+        | funds = model.funds - outcome
+    }
 
 
 addItems : BusinessModule -> Int -> BusinessModule
 addItems model income =
     { model
-     | inventory = model.inventory + income
-     }
+        | inventory = model.inventory + income
+    }
+
 
 removeItems : BusinessModule -> Int -> BusinessModule
 removeItems model outcome =
     { model
-     | inventory = model.inventory - outcome
-     }
+        | inventory = model.inventory - outcome
+    }

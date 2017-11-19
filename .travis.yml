@@ -11,7 +11,9 @@ node_js:
 
 install:
   - npm install -g elm@0.18 elm-test@0.18
+  - npm install
 
 script:
   - elm package install -y
+  - npm run lint
   - elm make app/Main.elm
