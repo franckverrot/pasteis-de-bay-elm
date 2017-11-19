@@ -72,6 +72,13 @@ update msg model =
             , Cmd.none
             )
 
+        BuyAds ->
+            ( { model
+                | businessModule = Business.buyAds model.businessModule
+              }
+            , Cmd.none
+            )
+
         Tick newTime ->
             ( model
                 |> Manufacturing.makeClips

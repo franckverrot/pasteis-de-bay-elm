@@ -10,6 +10,7 @@ type alias BusinessModule =
     , price : Float
     , demand : Float
     , demandBoost : Int
+    , marketingCost : Int
     , marketingLvl : Int
     , marketingEffectiveness : Int
     }
@@ -53,6 +54,7 @@ type Msg
     = Mdl (Material.Msg Msg)
     | CreateClip
     | BuyWires
+    | BuyAds
     | LowerPrice
     | RaisePrice
     | Tick Time

@@ -15,6 +15,7 @@ init =
     , price = 0.25
     , demand = 3
     , demandBoost = 1
+    , marketingCost = 100
     , marketingLvl = 1
     , marketingEffectiveness = 1
     }
@@ -31,17 +32,6 @@ view model =
                 [ text ("Available Funds: $ " ++ (formatFloat usLocale model.funds))
                 ]
             ]
-
-        --        , div [] [
-        --            span [] [
-        --                text ( "Avg. Rev. per sec: $ " ++ (toString model.clips) )
-        --            ]
-        --        ]
-        --        , div [] [
-        --            span [] [
-        --                text ( "Avg. Clips Sold per sec: " ++ (toString model.clips) )
-        --            ]
-        --        ]
         , div []
             [ span []
                 [ text ("Unsold Inventory: " ++ (toString model.inventory))
@@ -61,6 +51,16 @@ view model =
             [ span []
                 [ text ("Public demand: " ++ (demandPercentage model.demand) ++ "%")
                 ]
+            ]
+        , br [] []
+        , div []
+            [ button [ onClick BuyAds, disabled (model.funds < (toFloat model.marketingCost)) ] [ text "Marketing" ]
+            , span []
+                [ text (" Level: " ++ (toString model.marketingLvl))
+                ]
+            ]
+        , div []
+            [ text ("Cost: $ " ++ (formatInt usLocale model.marketingCost))
             ]
         ]
 
@@ -139,3 +139,14 @@ removeItems model outcome =
     { model
         | inventory = model.inventory - outcome
     }
+
+
+buyAds : BusinessModule -> BusinessModule
+buyAds model =
+    if (model.funds < toFloat model.marketingCost) then
+        model
+    else
+        { model
+            | funds = model.funds - toFloat model.marketingCost
+            , marketingLvl = model.marketingLvl + 1
+        }
