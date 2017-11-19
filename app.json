@@ -2,7 +2,7 @@
     "name": "Elm-paperclip",
     "repository": "https://github.com/AshDevFr/elm-paperclip",
     "env": {
-        "ELM_COMPILE": "elm make app/Main.elm --output elm.js"
+        "ELM_COMPILE": "elm make app/Main.elm --output build/elm.js"
     },
     "buildpacks": [
         {
