@@ -3,6 +3,27 @@ module Models exposing (..)
 import Material
 import Time exposing (Time)
 
+type alias BusinessModule = {
+    funds : Float
+    , inventory : Int
+    , price : Float
+    , demand : Float
+    , demandBoost : Int
+    , marketingLvl : Int
+    , marketingEffectiveness : Int
+    }
+
+type alias ManufacturingModule = {
+    wires : Int
+    , wireSupply : Int
+    , wireCost : Int
+    , wireBasePrice : Float
+    , clipperModule : Maybe ClipperModule
+    , megaClipperModule : Maybe MegaClipperModule
+    , partialClips : Float
+    , clipmakerRate: Float
+    }
+
 type alias ClipperModule = {
     cost: Float
     , boost: Int
@@ -17,24 +38,10 @@ type alias MegaClipperModule = {
 
 type alias Model = {
     mdl : Material.Model
-    , funds : Float
     , clips : Int
-    , partialClips : Float
-    , inventory : Int
-    , price : Float
-    , wires : Int
-    , wireSupply : Int
-    , wireCost : Int
-    , wireBasePrice : Float
-    , demand : Float
-    , demandBoost : Int
-    , marketingLvl : Int
-    , marketingEffectiveness : Int
-    , clipperModule : Maybe ClipperModule
-    , megaClipperModule : Maybe MegaClipperModule
-    , clipmakerRate: Float
+    , businessModule : BusinessModule
+    , manufacturingModule : ManufacturingModule
     }
-
 
 type Msg =
     Mdl (Material.Msg Msg)
