@@ -57,7 +57,7 @@ pasteisView model business =
             div []
                 [ br [] []
                 , div []
-                    [ button [ onClick BuyPasteis, disabled (business.funds < mod.cost) ] [ text "AutoPasteiss" ]
+                    [ button [ onClick BuyPasteis, disabled (business.funds < mod.cost) ] [ text "AutoPasteis" ]
                     , span []
                         [ text (" " ++ (toString mod.level))
                         ]
@@ -78,7 +78,7 @@ megaPasteisView model business =
             div []
                 [ br [] []
                 , div []
-                    [ button [ onClick BuyMegaPasteis, disabled (business.funds < mod.cost) ] [ text "MegaPasteiss" ]
+                    [ button [ onClick BuyMegaPasteis, disabled (business.funds < mod.cost) ] [ text "MegaPasteis" ]
                     , span []
                         [ text (" " ++ (toString mod.level))
                         ]
@@ -239,10 +239,10 @@ makePasteis model =
         _ ->
             let
                 autoPasteisAmount =
-                    runPasteiss model.manufacturingModule.pasteisModule
+                    runPasteis model.manufacturingModule.pasteisModule
 
                 megaPasteisAmount =
-                    runMegaPasteiss model.manufacturingModule.megaPasteisModule
+                    runMegaPasteis model.manufacturingModule.megaPasteisModule
 
                 partialPasteisCapacity =
                     model.manufacturingModule.partialPasteis + autoPasteisAmount + megaPasteisAmount
@@ -273,8 +273,8 @@ makePasteis model =
                 }
 
 
-runPasteiss : Maybe PasteisModule -> Float
-runPasteiss model =
+runPasteis : Maybe PasteisModule -> Float
+runPasteis model =
     case model of
         Nothing ->
             0
@@ -283,8 +283,8 @@ runPasteiss model =
             (toFloat (mod.boost * mod.level)) / 10
 
 
-runMegaPasteiss : Maybe MegaPasteisModule -> Float
-runMegaPasteiss model =
+runMegaPasteis : Maybe MegaPasteisModule -> Float
+runMegaPasteis model =
     case model of
         Nothing ->
             0
