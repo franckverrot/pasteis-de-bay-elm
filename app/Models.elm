@@ -17,25 +17,25 @@ type alias BusinessModule =
 
 
 type alias ManufacturingModule =
-    { wires : Int
-    , wireSupply : Int
-    , wireCost : Int
-    , wireBasePrice : Float
-    , clipperModule : Maybe ClipperModule
-    , megaClipperModule : Maybe MegaClipperModule
-    , partialClips : Float
-    , clipmakerRate : Float
+    { dough : Int
+    , doughSupply : Int
+    , doughCost : Int
+    , doughBasePrice : Float
+    , pasteisModule : Maybe PasteisModule
+    , megaPasteisModule : Maybe MegaPasteisModule
+    , partialPasteis : Float
+    , pasteisMakerRate : Float
     }
 
 
-type alias ClipperModule =
+type alias PasteisModule =
     { cost : Float
     , boost : Int
     , level : Int
     }
 
 
-type alias MegaClipperModule =
+type alias MegaPasteisModule =
     { cost : Float
     , boost : Int
     , level : Int
@@ -43,7 +43,7 @@ type alias MegaClipperModule =
 
 
 type alias SaveModel =
-    { clips : Int
+    { pasteis : Int
     , businessModule : BusinessModule
     , manufacturingModule : ManufacturingModule
     }
@@ -51,7 +51,7 @@ type alias SaveModel =
 
 type alias Model =
     { mdl : Material.Model
-    , clips : Int
+    , pasteis : Int
     , businessModule : BusinessModule
     , manufacturingModule : ManufacturingModule
     }
@@ -59,14 +59,14 @@ type alias Model =
 
 type Msg
     = Mdl (Material.Msg Msg)
-    | CreateClip
-    | BuyWires
+    | CreatePastel
+    | BuyDough
     | BuyAds
     | LowerPrice
     | RaisePrice
     | Tick Time
-    | SellClips Float
-    | AdjustwireCost Float
+    | SellPasteis Float
+    | AdjustdoughCost Float
     | UpdateModel
-    | BuyClipper
-    | BuyMegaClipper
+    | BuyPasteis
+    | BuyMegaPasteis

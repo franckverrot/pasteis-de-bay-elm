@@ -14,7 +14,7 @@ saveToModel : SaveModel -> Model
 saveToModel saveModel =
     { mdl =
         Material.model
-    , clips = saveModel.clips
+    , pasteis = saveModel.pasteis
     , businessModule = saveModel.businessModule
     , manufacturingModule = saveModel.manufacturingModule
     }
@@ -22,7 +22,7 @@ saveToModel saveModel =
 
 modelToSave : Model -> SaveModel
 modelToSave model =
-    { clips = model.clips
+    { pasteis = model.pasteis
     , businessModule = model.businessModule
     , manufacturingModule = model.manufacturingModule
     }

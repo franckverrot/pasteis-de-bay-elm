@@ -4,21 +4,20 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Models exposing (..)
-import Utils exposing (demandPercentage)
 import FormatNumber exposing (formatFloat, formatInt, usLocale)
 import Business as Business
 
 
 init : ManufacturingModule
 init =
-    { wires = 1000
-    , wireSupply = 1000
-    , wireCost = 15
-    , wireBasePrice = 15
-    , clipperModule = Nothing
-    , megaClipperModule = Nothing
-    , partialClips = 0
-    , clipmakerRate = 0
+    { dough = 1000
+    , doughSupply = 1000
+    , doughCost = 15
+    , doughBasePrice = 15
+    , pasteisModule = Nothing
+    , megaPasteisModule = Nothing
+    , partialPasteis = 0
+    , pasteisMakerRate = 0
     }
 
 
@@ -30,27 +29,27 @@ view model business =
             ]
         , div []
             [ span []
-                [ text ("Clips per Second: " ++ (model.clipmakerRate |> round |> toString))
+                [ text ("Pasteis per Second: " ++ (model.pasteisMakerRate |> round |> toString))
                 ]
             ]
         , br [] []
         , div []
-            [ button [ onClick BuyWires, disabled (business.funds < (toFloat model.wireCost)) ] [ text "Wire" ]
+            [ button [ onClick BuyDough, disabled (business.funds < (toFloat model.doughCost)) ] [ text "Dough" ]
             , span []
-                [ text (" " ++ (toString model.wires) ++ " inches")
+                [ text (" " ++ (toString model.dough) ++ " inches")
                 ]
             ]
         , div []
-            [ text ("Cost: $ " ++ (toString model.wireCost))
+            [ text ("Cost: $ " ++ (toString model.doughCost))
             ]
-        , clipperView model business
-        , megaClipperView model business
+        , pasteisView model business
+        , megaPasteisView model business
         ]
 
 
-clipperView : ManufacturingModule -> BusinessModule -> Html Msg
-clipperView model business =
-    case model.clipperModule of
+pasteisView : ManufacturingModule -> BusinessModule -> Html Msg
+pasteisView model business =
+    case model.pasteisModule of
         Nothing ->
             text ""
 
@@ -58,7 +57,7 @@ clipperView model business =
             div []
                 [ br [] []
                 , div []
-                    [ button [ onClick BuyClipper, disabled (business.funds < mod.cost) ] [ text "AutoClippers" ]
+                    [ button [ onClick BuyPasteis, disabled (business.funds < mod.cost) ] [ text "AutoPasteiss" ]
                     , span []
                         [ text (" " ++ (toString mod.level))
                         ]
@@ -69,9 +68,9 @@ clipperView model business =
                 ]
 
 
-megaClipperView : ManufacturingModule -> BusinessModule -> Html Msg
-megaClipperView model business =
-    case model.megaClipperModule of
+megaPasteisView : ManufacturingModule -> BusinessModule -> Html Msg
+megaPasteisView model business =
+    case model.megaPasteisModule of
         Nothing ->
             text ""
 
@@ -79,7 +78,7 @@ megaClipperView model business =
             div []
                 [ br [] []
                 , div []
-                    [ button [ onClick BuyMegaClipper, disabled (business.funds < mod.cost) ] [ text "MegaClippers" ]
+                    [ button [ onClick BuyMegaPasteis, disabled (business.funds < mod.cost) ] [ text "MegaPasteiss" ]
                     , span []
                         [ text (" " ++ (toString mod.level))
                         ]
@@ -93,20 +92,20 @@ megaClipperView model business =
 updateModel : ManufacturingModule -> BusinessModule -> ManufacturingModule
 updateModel model business =
     { model
-        | clipperModule = (tryMakeClipperModule model business.funds)
-        , megaClipperModule = (tryMakeMegaClipperModule model)
+        | pasteisModule = (tryMakePasteisModule model business.funds)
+        , megaPasteisModule = (tryMakeMegaPasteisModule model)
     }
 
 
-tryMakeClipperModule : ManufacturingModule -> Float -> Maybe ClipperModule
-tryMakeClipperModule model funds =
-    case model.clipperModule of
+tryMakePasteisModule : ManufacturingModule -> Float -> Maybe PasteisModule
+tryMakePasteisModule model funds =
+    case model.pasteisModule of
         Just mod ->
             let
-                clipperCost =
+                pasteisCost =
                     (1.1 ^ (toFloat mod.level)) + 4
             in
-                Just { mod | cost = clipperCost }
+                Just { mod | cost = pasteisCost }
 
         Nothing ->
             let
@@ -125,23 +124,23 @@ tryMakeClipperModule model funds =
                             }
 
 
-tryMakeMegaClipperModule : ManufacturingModule -> Maybe MegaClipperModule
-tryMakeMegaClipperModule model =
-    case model.megaClipperModule of
+tryMakeMegaPasteisModule : ManufacturingModule -> Maybe MegaPasteisModule
+tryMakeMegaPasteisModule model =
+    case model.megaPasteisModule of
         Just mod ->
             let
-                megaClipperCost =
+                megaPasteisCost =
                     (1.07 ^ (toFloat mod.level)) * 1000
             in
-                Just { mod | cost = megaClipperCost }
+                Just { mod | cost = megaPasteisCost }
 
         Nothing ->
-            case model.clipperModule of
+            case model.pasteisModule of
                 Nothing ->
                     Nothing
 
-                Just clipperModule ->
-                    case clipperModule.level >= 75 of
+                Just pasteisModule ->
+                    case pasteisModule.level >= 75 of
                         False ->
                             Nothing
 
@@ -153,53 +152,53 @@ tryMakeMegaClipperModule model =
                                 }
 
 
-addClipper : ManufacturingModule -> ManufacturingModule
-addClipper model =
-    case model.clipperModule of
+addPasteis : ManufacturingModule -> ManufacturingModule
+addPasteis model =
+    case model.pasteisModule of
         Nothing ->
             model
 
         Just mod ->
-            { model | clipperModule = addClipper_ mod }
+            { model | pasteisModule = addPasteis_ mod }
 
 
-addClipper_ : ClipperModule -> Maybe ClipperModule
-addClipper_ model =
+addPasteis_ : PasteisModule -> Maybe PasteisModule
+addPasteis_ model =
     Just { model | level = model.level + 1 }
 
 
-addMegaClipper : ManufacturingModule -> ManufacturingModule
-addMegaClipper model =
-    case model.megaClipperModule of
+addMegaPasteis : ManufacturingModule -> ManufacturingModule
+addMegaPasteis model =
+    case model.megaPasteisModule of
         Nothing ->
             model
 
         Just mod ->
-            { model | megaClipperModule = addMegaClipper_ mod }
+            { model | megaPasteisModule = addMegaPasteis_ mod }
 
 
-addMegaClipper_ : MegaClipperModule -> Maybe MegaClipperModule
-addMegaClipper_ model =
+addMegaPasteis_ : MegaPasteisModule -> Maybe MegaPasteisModule
+addMegaPasteis_ model =
     Just { model | level = model.level + 1 }
 
 
-adjustwireCost : ManufacturingModule -> Float -> ManufacturingModule
-adjustwireCost model rand =
+adjustdoughCost : ManufacturingModule -> Float -> ManufacturingModule
+adjustdoughCost model rand =
     if (rand > 1.5) then
         model
     else
         let
-            wireAdjust =
+            doughAdjust =
                 5 * (Basics.sin ((rand * 100) + 50))
         in
             { model
-                | wireCost = ceiling (model.wireBasePrice + wireAdjust)
+                | doughCost = ceiling (model.doughBasePrice + doughAdjust)
             }
 
 
-createClip : Model -> Model
-createClip model =
-    if (model.manufacturingModule.wires < 1) then
+createPastel : Model -> Model
+createPastel model =
+    if (model.manufacturingModule.dough < 1) then
         model
     else
         let
@@ -210,18 +209,18 @@ createClip model =
                 model.manufacturingModule
 
             newManufacturingModule =
-                { manufacturingModule | wires = manufacturingModule.wires - 1 }
+                { manufacturingModule | dough = manufacturingModule.dough - 1 }
         in
             { model
-                | clips = model.clips + 1
+                | pasteis = model.pasteis + 1
                 , businessModule = businessModule
                 , manufacturingModule = newManufacturingModule
             }
 
 
-makeClips : Model -> Model
-makeClips model =
-    case model.manufacturingModule.wires of
+makePasteis : Model -> Model
+makePasteis model =
+    case model.manufacturingModule.dough of
         0 ->
             let
                 manufacturingModule =
@@ -229,8 +228,8 @@ makeClips model =
 
                 newManufacturingModule =
                     { manufacturingModule
-                        | clipmakerRate = 0
-                        , partialClips = 0
+                        | pasteisMakerRate = 0
+                        , partialPasteis = 0
                     }
             in
                 { model
@@ -239,43 +238,43 @@ makeClips model =
 
         _ ->
             let
-                autoClipperAmount =
-                    runClippers model.manufacturingModule.clipperModule
+                autoPasteisAmount =
+                    runPasteiss model.manufacturingModule.pasteisModule
 
-                megaClipperAmount =
-                    runMegaClippers model.manufacturingModule.megaClipperModule
+                megaPasteisAmount =
+                    runMegaPasteiss model.manufacturingModule.megaPasteisModule
 
-                partialClipsCapacity =
-                    model.manufacturingModule.partialClips + autoClipperAmount + megaClipperAmount
+                partialPasteisCapacity =
+                    model.manufacturingModule.partialPasteis + autoPasteisAmount + megaPasteisAmount
 
-                fullClipsCapacity =
-                    floor partialClipsCapacity
+                fullPasteisCapacity =
+                    floor partialPasteisCapacity
 
-                clipmakerRate =
-                    (Basics.min (autoClipperAmount + megaClipperAmount) (toFloat model.manufacturingModule.wires)) * 10
+                pasteisMakerRate =
+                    (Basics.min (autoPasteisAmount + megaPasteisAmount) (toFloat model.manufacturingModule.dough)) * 10
 
-                fullClips =
-                    Basics.min fullClipsCapacity model.manufacturingModule.wires
+                fullPasteis =
+                    Basics.min fullPasteisCapacity model.manufacturingModule.dough
 
                 manufacturingModule =
                     model.manufacturingModule
 
                 newManufacturingModule =
                     { manufacturingModule
-                        | partialClips = partialClipsCapacity - (toFloat fullClipsCapacity)
-                        , wires = model.manufacturingModule.wires - fullClips
-                        , clipmakerRate = clipmakerRate
+                        | partialPasteis = partialPasteisCapacity - (toFloat fullPasteisCapacity)
+                        , dough = model.manufacturingModule.dough - fullPasteis
+                        , pasteisMakerRate = pasteisMakerRate
                     }
             in
                 { model
-                    | clips = model.clips + fullClips
-                    , businessModule = Business.addItems model.businessModule fullClips
+                    | pasteis = model.pasteis + fullPasteis
+                    , businessModule = Business.addItems model.businessModule fullPasteis
                     , manufacturingModule = newManufacturingModule
                 }
 
 
-runClippers : Maybe ClipperModule -> Float
-runClippers model =
+runPasteiss : Maybe PasteisModule -> Float
+runPasteiss model =
     case model of
         Nothing ->
             0
@@ -284,8 +283,8 @@ runClippers model =
             (toFloat (mod.boost * mod.level)) / 10
 
 
-runMegaClippers : Maybe MegaClipperModule -> Float
-runMegaClippers model =
+runMegaPasteiss : Maybe MegaPasteisModule -> Float
+runMegaPasteiss model =
     case model of
         Nothing ->
             0
@@ -294,23 +293,23 @@ runMegaClippers model =
             (toFloat (mod.boost * mod.level)) / 10
 
 
-buyWires : ManufacturingModule -> BusinessModule -> ( ManufacturingModule, BusinessModule )
-buyWires model business =
+buyDough : ManufacturingModule -> BusinessModule -> ( ManufacturingModule, BusinessModule )
+buyDough model business =
     let
-        wireCost =
-            toFloat model.wireCost
+        doughCost =
+            toFloat model.doughCost
     in
-        if (business.funds < wireCost) then
+        if (business.funds < doughCost) then
             ( model, business )
         else
             let
                 businessModule =
-                    Business.removeFunds business wireCost
+                    Business.removeFunds business doughCost
 
                 manufacturingModule =
                     { model
-                        | wireBasePrice = model.wireBasePrice + 0.05
-                        , wires = model.wires + model.wireSupply
+                        | doughBasePrice = model.doughBasePrice + 0.05
+                        , dough = model.dough + model.doughSupply
                     }
             in
                 ( manufacturingModule, businessModule )

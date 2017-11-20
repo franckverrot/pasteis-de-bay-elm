@@ -42,7 +42,7 @@ view model =
             , button [ onClick RaisePrice ] [ text "Raise" ]
             , span []
                 [ text
-                    (" Price per Clip: $ "
+                    (" Price per Pastel: $ "
                         ++ (formatFloat usLocale model.price)
                     )
                 ]
@@ -93,8 +93,8 @@ raisePrice model =
     }
 
 
-sellClips : BusinessModule -> Float -> BusinessModule
-sellClips model rand =
+sellPasteis : BusinessModule -> Float -> BusinessModule
+sellPasteis model rand =
     let
         demand =
             floor (0.7 * (model.demand ^ 1.15))

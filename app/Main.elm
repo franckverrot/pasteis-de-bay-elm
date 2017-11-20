@@ -32,7 +32,7 @@ port saveState : SaveModel -> Cmd msg
 emptyModel : Model
 emptyModel =
     { mdl = Material.model
-    , clips = 0
+    , pasteis = 0
     , businessModule = Business.init
     , manufacturingModule = Manufacturing.init
     }
@@ -51,13 +51,13 @@ init savedModel =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        CreateClip ->
-            ( Manufacturing.createClip model, Cmd.none )
+        CreatePastel ->
+            ( Manufacturing.createPastel model, Cmd.none )
 
-        BuyWires ->
+        BuyDough ->
             let
                 ( manufacturingModule, businessModule ) =
-                    Manufacturing.buyWires model.manufacturingModule model.businessModule
+                    Manufacturing.buyDough model.manufacturingModule model.businessModule
             in
                 ( { model
                     | businessModule = businessModule
@@ -91,50 +91,50 @@ update msg model =
 
         Tick newTime ->
             ( model
-                |> Manufacturing.makeClips
+                |> Manufacturing.makePasteis
                 |> updateModel
             , Cmd.batch
-                [ Random.generate SellClips (Random.float 0 100)
-                , Random.generate AdjustwireCost (Random.float 0 100)
+                [ Random.generate SellPasteis (Random.float 0 100)
+                , Random.generate AdjustdoughCost (Random.float 0 100)
                 , saveState (Utils.modelToSave model)
                 ]
             )
 
-        SellClips rand ->
+        SellPasteis rand ->
             ( { model
-                | businessModule = Business.sellClips model.businessModule rand
+                | businessModule = Business.sellPasteis model.businessModule rand
               }
             , Cmd.none
             )
 
-        AdjustwireCost rand ->
+        AdjustdoughCost rand ->
             ( { model
-                | manufacturingModule = Manufacturing.adjustwireCost model.manufacturingModule rand
+                | manufacturingModule = Manufacturing.adjustdoughCost model.manufacturingModule rand
               }
             , Cmd.none
             )
 
-        BuyClipper ->
-            case model.manufacturingModule.clipperModule of
+        BuyPasteis ->
+            case model.manufacturingModule.pasteisModule of
                 Nothing ->
                     ( model, Cmd.none )
 
                 Just mod ->
                     { model
                         | businessModule = Business.removeFunds model.businessModule mod.cost
-                        , manufacturingModule = Manufacturing.addClipper model.manufacturingModule
+                        , manufacturingModule = Manufacturing.addPasteis model.manufacturingModule
                     }
                         |> flip (,) Cmd.none
 
-        BuyMegaClipper ->
-            case model.manufacturingModule.megaClipperModule of
+        BuyMegaPasteis ->
+            case model.manufacturingModule.megaPasteisModule of
                 Nothing ->
                     ( model, Cmd.none )
 
                 Just mod ->
                     { model
                         | businessModule = Business.removeFunds model.businessModule mod.cost
-                        , manufacturingModule = Manufacturing.addMegaClipper model.manufacturingModule
+                        , manufacturingModule = Manufacturing.addMegaPasteis model.manufacturingModule
                     }
                         |> flip (,) Cmd.none
 
@@ -156,7 +156,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ h1 []
-            [ text ("Clips " ++ (formatInt usLocale model.clips))
+            [ text ("Pasteis " ++ (formatInt usLocale model.pasteis))
             ]
         , div []
             [ Button.render Mdl
@@ -164,10 +164,10 @@ view model =
                 model.mdl
                 [ Button.raised
                 , Button.ripple
-                , Options.onClick CreateClip
-                , Options.disabled (model.manufacturingModule.wires < 1)
+                , Options.onClick CreatePastel
+                , Options.disabled (model.manufacturingModule.dough < 1)
                 ]
-                [ text "Make a clip" ]
+                [ text "Make a Pastel" ]
             ]
         , Business.view model.businessModule
         , Manufacturing.view model.manufacturingModule model.businessModule

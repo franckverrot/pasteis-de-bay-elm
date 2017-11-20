@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Elm Paperclip</title>
+  <title>Elm PaperPastel</title>
   <script type="text/javascript" src="build/elm.js"></script>
 </head>
 
@@ -11,11 +11,11 @@
 </body>
 
 <script type="text/javascript">
-  var storedState = localStorage.getItem('elm-paperclip');
+  var storedState = localStorage.getItem('elm-paperPastel');
   var startingState = storedState ? JSON.parse(storedState) : null;
   var mainApp = Elm.Main.fullscreen(startingState);
   mainApp.ports.saveState.subscribe(function(state) {
-    localStorage.setItem('elm-paperclip', JSON.stringify(state));
+    localStorage.setItem('elm-paperPastel', JSON.stringify(state));
   });
 </script>
 
