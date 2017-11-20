@@ -36,7 +36,7 @@ view model business =
         , div []
             [ button [ onClick BuyDough, disabled (business.funds < (toFloat model.doughCost)) ] [ text "Dough" ]
             , span []
-                [ text (" " ++ (toString model.dough) ++ " inches")
+                [ text (" " ++ (toString model.dough) ++ " coins")
                 ]
             ]
         , div []
