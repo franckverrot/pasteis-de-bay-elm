@@ -46,7 +46,7 @@ view model =
                 [ Color.text Color.black
                 , Typography.subhead
                 ]
-                [ text ("Unsold Inventory: " ++ (toString businessModule.inventory)) ]
+                [ text ("Unsold Inventory: " ++ (formatInt usLocale businessModule.inventory)) ]
             , Card.actions [ Color.text Color.black ]
                 [ grid []
                     [ cell
