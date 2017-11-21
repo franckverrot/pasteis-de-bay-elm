@@ -63,6 +63,12 @@ view model =
                         [ size All 6
                         , align Middle
                         ]
+                        [ text (" " ++ (toString manufacturingModule.dough) ++ " coins")
+                        ]
+                    , cell
+                        [ size All 12
+                        , align Top
+                        ]
                         [ text ("Cost: $ " ++ (toString manufacturingModule.doughCost))
                         ]
                     ]
@@ -109,9 +115,12 @@ pasteisView model =
                             ]
                             [ text (" " ++ (toString mod.level))
                             ]
-                        ]
-                    , Options.div []
-                        [ text ("Cost: $ " ++ (formatFloat usLocale mod.cost))
+                        , cell
+                            [ size All 12
+                            , align Top
+                            ]
+                            [ Options.span [] [ text ("Cost: $ " ++ (formatFloat usLocale mod.cost)) ]
+                            ]
                         ]
                     ]
 
@@ -153,9 +162,12 @@ megaPasteisView model =
                             ]
                             [ text (" " ++ (toString mod.level))
                             ]
-                        ]
-                    , Options.div []
-                        [ text ("Cost: $ " ++ (formatFloat usLocale mod.cost))
+                        , cell
+                            [ size All 12
+                            , align Top
+                            ]
+                            [ Options.span [] [ text ("Cost: $ " ++ (formatFloat usLocale mod.cost)) ]
+                            ]
                         ]
                     ]
 

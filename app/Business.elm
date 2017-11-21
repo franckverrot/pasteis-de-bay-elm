@@ -6,6 +6,7 @@ import Material.Button as Button
 import Material.Options as Options exposing (css)
 import Material.Elevation as Elevation
 import Material.Color as Color
+import Material.Typography as Typography
 import Material.Grid exposing (grid, cell, size, Device(..), Align(..), align)
 import Models exposing (..)
 import Utils exposing (demandPercentage)
@@ -41,6 +42,11 @@ view model =
                 [ Card.head [] [ text "Business" ]
                 , Card.subhead [] [ text ("Available Funds: $ " ++ (formatFloat usLocale businessModule.funds)) ]
                 ]
+            , Card.text
+                [ Color.text Color.black
+                , Typography.subhead
+                ]
+                [ text ("Unsold Inventory: " ++ (toString businessModule.inventory)) ]
             , Card.actions [ Color.text Color.black ]
                 [ grid []
                     [ cell
@@ -70,8 +76,13 @@ view model =
                                 ++ (formatFloat usLocale businessModule.price)
                             )
                         ]
+                    , cell
+                        [ size All 12
+                        , align Top
+                        ]
+                        [ Options.span [] [ text ("Public demand: " ++ (demandPercentage businessModule.demand) ++ "%") ]
+                        ]
                     ]
-                , text ("Public demand: " ++ (demandPercentage businessModule.demand) ++ "%")
                 ]
             , Card.actions [ Color.text Color.black ]
                 [ grid []
@@ -93,8 +104,13 @@ view model =
                         ]
                         [ text (" Level: " ++ (toString businessModule.marketingLvl))
                         ]
+                    , cell
+                        [ size All 12
+                        , align Top
+                        ]
+                        [ Options.span [] [ text ("Cost: $ " ++ (formatInt usLocale businessModule.marketingCost)) ]
+                        ]
                     ]
-                , text ("Cost: $ " ++ (formatInt usLocale businessModule.marketingCost))
                 ]
             ]
 
