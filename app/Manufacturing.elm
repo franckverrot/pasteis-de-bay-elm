@@ -63,7 +63,7 @@ view model =
                         [ size All 6
                         , align Middle
                         ]
-                        [ text (" " ++ (toString manufacturingModule.dough) ++ " coins")
+                        [ text (" " ++ (formatInt usLocale manufacturingModule.dough) ++ " coins")
                         ]
                     , cell
                         [ size All 12
