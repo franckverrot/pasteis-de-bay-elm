@@ -170,7 +170,7 @@ view model =
                 [ text "Make a Pastel" ]
             ]
         , Business.view model.businessModule
-        , Manufacturing.view model.manufacturingModule model.businessModule
+        , Manufacturing.view model
         ]
         |> Material.Scheme.top
 
