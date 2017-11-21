@@ -48,7 +48,7 @@ view model =
                         , align Middle
                         ]
                         [ Button.render Mdl
-                            [ 1 ]
+                            [ 1, 1 ]
                             model.mdl
                             [ Button.colored
                             , Button.ripple
@@ -57,7 +57,7 @@ view model =
                             [ text "-"
                             ]
                         , Button.render Mdl
-                            [ 2 ]
+                            [ 1, 2 ]
                             model.mdl
                             [ Button.colored
                             , Button.ripple
@@ -77,7 +77,7 @@ view model =
                 [ grid []
                     [ cell [ size All 6 ]
                         [ Button.render Mdl
-                            [ 0 ]
+                            [ 1, 3 ]
                             model.mdl
                             [ Button.colored
                             , Button.ripple

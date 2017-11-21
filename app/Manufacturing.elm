@@ -49,7 +49,7 @@ view model =
                 [ grid []
                     [ cell [ size All 6 ]
                         [ Button.render Mdl
-                            [ 0 ]
+                            [ 2, 1 ]
                             model.mdl
                             [ Button.colored
                             , Button.ripple
@@ -93,7 +93,7 @@ pasteisView model =
                     [ grid []
                         [ cell [ size All 6 ]
                             [ Button.render Mdl
-                                [ 0 ]
+                                [ 2, 2 ]
                                 model.mdl
                                 [ Button.colored
                                 , Button.ripple
@@ -137,7 +137,7 @@ megaPasteisView model =
                     [ grid []
                         [ cell [ size All 6 ]
                             [ Button.render Mdl
-                                [ 0 ]
+                                [ 2, 3 ]
                                 model.mdl
                                 [ Button.colored
                                 , Button.ripple
