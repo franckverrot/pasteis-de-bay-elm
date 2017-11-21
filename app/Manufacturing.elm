@@ -35,8 +35,9 @@ view model =
             model.manufacturingModule
     in
         Card.view
-            [ css "width" "256px"
-            , Elevation.e2
+            [ Elevation.e2
+            , css "margin" "4px 8px"
+            , css "width" "400px"
             ]
             [ Card.title
                 [ css "flex-direction" "column" ]
@@ -82,7 +83,7 @@ pasteisView model =
     in
         case manufacturingModule.pasteisModule of
             Nothing ->
-                Card.text [ Color.text Color.black ] [ text "" ]
+                Card.actions [ Color.text Color.black ] [ text "" ]
 
             Just mod ->
                 Card.actions
@@ -126,7 +127,7 @@ megaPasteisView model =
     in
         case manufacturingModule.megaPasteisModule of
             Nothing ->
-                Card.text [ Color.text Color.black ] [ text "" ]
+                Card.actions [ Color.text Color.black ] [ text "" ]
 
             Just mod ->
                 Card.actions

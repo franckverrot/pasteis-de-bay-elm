@@ -6,7 +6,7 @@ import Html.Events exposing (..)
 import Material
 import Material.Scheme
 import Material.Button as Button
-import Material.Options as Options
+import Material.Options as Options exposing (css)
 import Time exposing (Time, every, second, millisecond)
 import Random
 import FormatNumber exposing (formatFloat, formatInt, usLocale)
@@ -169,8 +169,25 @@ view model =
                 ]
                 [ text "Make a Pastel" ]
             ]
-        , Business.view model.businessModule
-        , Manufacturing.view model
+        , Options.div
+            [ css "display" "flex"
+            , css "flex-flow" "row wrap"
+            , css "align-items" "flex-end"
+            , css "margin-top" "20px"
+            ]
+            [ Options.div
+                [ css "display" "flex"
+                , css "flex-flow" "row wrap"
+                , css "justify-content" "space-between"
+                , css "align-items" "center"
+                , css "min-width" "256px"
+                , css "max-width" "400px"
+                , css "flex" "1 1 auto"
+                ]
+                [ Business.view model
+                , Manufacturing.view model
+                ]
+            ]
         ]
         |> Material.Scheme.top
 

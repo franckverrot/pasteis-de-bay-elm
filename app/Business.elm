@@ -1,8 +1,12 @@
 module Business exposing (..)
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html exposing (Html, text)
+import Material.Card as Card
+import Material.Button as Button
+import Material.Options as Options exposing (css)
+import Material.Elevation as Elevation
+import Material.Color as Color
+import Material.Grid exposing (grid, cell, size, Device(..), Align(..), align)
 import Models exposing (..)
 import Utils exposing (demandPercentage)
 import FormatNumber exposing (formatFloat, formatInt, usLocale)
@@ -21,48 +25,78 @@ init =
     }
 
 
-view : BusinessModule -> Html Msg
+view : Model -> Html Msg
 view model =
-    div []
-        [ div []
-            [ h2 [] [ text "Business" ]
+    let
+        businessModule =
+            model.businessModule
+    in
+        Card.view
+            [ Elevation.e2
+            , css "margin" "4px 8px"
+            , css "width" "400px"
             ]
-        , div []
-            [ span []
-                [ text ("Available Funds: $ " ++ (formatFloat usLocale model.funds))
+            [ Card.title
+                [ css "flex-direction" "column" ]
+                [ Card.head [] [ text "Business" ]
+                , Card.subhead [] [ text ("Available Funds: $ " ++ (formatFloat usLocale businessModule.funds)) ]
+                ]
+            , Card.actions [ Color.text Color.black ]
+                [ grid []
+                    [ cell
+                        [ size All 12
+                        , align Middle
+                        ]
+                        [ Button.render Mdl
+                            [ 1 ]
+                            model.mdl
+                            [ Button.colored
+                            , Button.ripple
+                            , Options.onClick LowerPrice
+                            ]
+                            [ text "-"
+                            ]
+                        , Button.render Mdl
+                            [ 2 ]
+                            model.mdl
+                            [ Button.colored
+                            , Button.ripple
+                            , Options.onClick RaisePrice
+                            ]
+                            [ text "+"
+                            ]
+                        , text
+                            (" Price per Pastel: $ "
+                                ++ (formatFloat usLocale businessModule.price)
+                            )
+                        ]
+                    ]
+                , text ("Public demand: " ++ (demandPercentage businessModule.demand) ++ "%")
+                ]
+            , Card.actions [ Color.text Color.black ]
+                [ grid []
+                    [ cell [ size All 6 ]
+                        [ Button.render Mdl
+                            [ 0 ]
+                            model.mdl
+                            [ Button.colored
+                            , Button.ripple
+                            , Options.onClick BuyAds
+                            , Options.disabled (businessModule.funds < (toFloat businessModule.marketingCost))
+                            ]
+                            [ text "Marketing"
+                            ]
+                        ]
+                    , cell
+                        [ size All 6
+                        , align Middle
+                        ]
+                        [ text (" Level: " ++ (toString businessModule.marketingLvl))
+                        ]
+                    ]
+                , text ("Cost: $ " ++ (formatInt usLocale businessModule.marketingCost))
                 ]
             ]
-        , div []
-            [ span []
-                [ text ("Unsold Inventory: " ++ (toString model.inventory))
-                ]
-            ]
-        , div []
-            [ button [ onClick LowerPrice ] [ text "Lower" ]
-            , button [ onClick RaisePrice ] [ text "Raise" ]
-            , span []
-                [ text
-                    (" Price per Pastel: $ "
-                        ++ (formatFloat usLocale model.price)
-                    )
-                ]
-            ]
-        , div []
-            [ span []
-                [ text ("Public demand: " ++ (demandPercentage model.demand) ++ "%")
-                ]
-            ]
-        , br [] []
-        , div []
-            [ button [ onClick BuyAds, disabled (model.funds < (toFloat model.marketingCost)) ] [ text "Marketing" ]
-            , span []
-                [ text (" Level: " ++ (toString model.marketingLvl))
-                ]
-            ]
-        , div []
-            [ text ("Cost: $ " ++ (formatInt usLocale model.marketingCost))
-            ]
-        ]
 
 
 updateModel : BusinessModule -> BusinessModule
