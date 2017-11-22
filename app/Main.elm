@@ -1,8 +1,6 @@
 port module Main exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
 import Material
 import Material.Scheme
 import Material.Button as Button
@@ -32,6 +30,7 @@ port saveState : SaveModel -> Cmd msg
 emptyModel : Model
 emptyModel =
     { mdl = Material.model
+    , lastTick = Nothing
     , pasteis = 0
     , businessModule = Business.init
     , manufacturingModule = Manufacturing.init
@@ -90,28 +89,10 @@ update msg model =
             )
 
         Tick newTime ->
-            ( model
-                |> Manufacturing.makePasteis
-                |> updateModel
+            ( applyTime model newTime
             , Cmd.batch
-                [ Random.generate SellPasteis (Random.float 0 100)
-                , Random.generate AdjustdoughCost (Random.float 0 100)
-                , saveState (Utils.modelToSave model)
+                [ saveState (Utils.modelToSave model)
                 ]
-            )
-
-        SellPasteis rand ->
-            ( { model
-                | businessModule = Business.sellPasteis model.businessModule rand
-              }
-            , Cmd.none
-            )
-
-        AdjustdoughCost rand ->
-            ( { model
-                | manufacturingModule = Manufacturing.adjustdoughCost model.manufacturingModule rand
-              }
-            , Cmd.none
             )
 
         BuyPasteis ->
@@ -205,3 +186,73 @@ updateModel model =
             | businessModule = businessModule
             , manufacturingModule = manufacturingModule
         }
+
+
+applyTime : Model -> Time -> Model
+applyTime model time =
+    case model.lastTick of
+        Nothing ->
+            let
+                seed0 =
+                    Random.initialSeed (floor (Time.inMilliseconds time))
+
+                ( float1, seed1 ) =
+                    Utils.randomFloat 0 100 seed0
+
+                ( float2, seed2 ) =
+                    Utils.randomFloat 0 100 seed1
+            in
+                applyTime_ model ( [ float1 ], [ float2 ] ) |> flip setLastTick time
+
+        Just lastTick ->
+            let
+                elapsedTime =
+                    (Time.inMilliseconds time) - (Time.inMilliseconds lastTick)
+
+                operationsToRun =
+                    Basics.max (floor (elapsedTime / 100)) 1
+
+                seed0 =
+                    Random.initialSeed (floor (Time.inMilliseconds time))
+
+                ( floatList1, seed1 ) =
+                    Utils.randomMultipleFloat 0 100 operationsToRun seed0
+
+                ( floatList2, seed2 ) =
+                    Utils.randomMultipleFloat 0 100 operationsToRun seed1
+            in
+                applyTime_ model ( floatList1, floatList1 ) |> flip setLastTick time
+
+
+applyTime_ : Model -> ( List Float, List Float ) -> Model
+applyTime_ model ( floatList, floatList2 ) =
+    case List.length floatList of
+        0 ->
+            model
+
+        _ ->
+            let
+                float1 =
+                    Maybe.withDefault 0 (List.head floatList)
+
+                float2 =
+                    Maybe.withDefault 0 (List.head floatList2)
+
+                floats1 =
+                    Maybe.withDefault [] (List.tail floatList)
+
+                floats2 =
+                    Maybe.withDefault [] (List.tail floatList2)
+            in
+                { model
+                    | businessModule = Business.sellPasteis model.businessModule float1
+                    , manufacturingModule = Manufacturing.adjustdoughCost model.manufacturingModule float2
+                }
+                    |> Manufacturing.makePasteis
+                    |> updateModel
+                    |> flip applyTime_ ( floats1, floats2 )
+
+
+setLastTick : Model -> Time -> Model
+setLastTick model time =
+    { model | lastTick = Just time }

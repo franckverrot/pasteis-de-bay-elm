@@ -51,6 +51,7 @@ type alias SaveModel =
 
 type alias Model =
     { mdl : Material.Model
+    , lastTick : Maybe Time
     , pasteis : Int
     , businessModule : BusinessModule
     , manufacturingModule : ManufacturingModule
@@ -65,8 +66,6 @@ type Msg
     | LowerPrice
     | RaisePrice
     | Tick Time
-    | SellPasteis Float
-    | AdjustdoughCost Float
     | UpdateModel
     | BuyPasteis
     | BuyMegaPasteis
