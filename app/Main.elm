@@ -4,6 +4,7 @@ import Html exposing (..)
 import Material
 import Material.Scheme
 import Material.Button as Button
+import Material.Icon as Icon
 import Material.Options as Options exposing (css)
 import Material.Grid exposing (grid, cell, size, Device(..), Align(..), align)
 import Time exposing (Time, every, second, millisecond)
@@ -144,6 +145,9 @@ update msg model =
                     }
                         |> flip (,) Cmd.none
 
+        Reset ->
+            ( emptyModel, Cmd.none )
+
         UpdateModel ->
             ( updateModel model, Cmd.none )
 
@@ -164,19 +168,29 @@ view model =
         [ h1 []
             [ text ("Pasteis " ++ (formatInt usLocale model.pasteis))
             ]
-        , div []
-            [ Button.render Mdl
-                [ 0 ]
-                model.mdl
-                [ Button.raised
-                , Button.ripple
-                , Options.onClick CreatePastel
-                , Options.disabled (model.manufacturingModule.dough < 1)
-                ]
-                [ text "Make a Pastel" ]
-            ]
         , grid []
-            [ cell [ size All 3 ]
+            [ cell [ size All 12 ]
+                [ Button.render Mdl
+                    [ 0 ]
+                    model.mdl
+                    [ Button.raised
+                    , Button.ripple
+                    , Options.onClick CreatePastel
+                    , Options.disabled (model.manufacturingModule.dough < 1)
+                    ]
+                    [ text "Make a Pastel" ]
+                , text ""
+                , Button.render Mdl
+                    [ 1 ]
+                    model.mdl
+                    [ Button.minifab
+                    , Button.colored
+                    , Button.ripple
+                    , Options.onClick Reset
+                    ]
+                    [ Icon.i "delete" ]
+                ]
+            , cell [ size All 3 ]
                 [ Options.div
                     [ css "display" "flex"
                     , css "flex-flow" "row wrap"

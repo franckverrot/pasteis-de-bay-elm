@@ -84,3 +84,4 @@ type Msg
     | BuyMegaPasteis
     | AddProcessor
     | AddMemory
+    | Reset
