@@ -294,7 +294,7 @@ applyTime model time =
                     (Time.inMilliseconds time) - (Time.inMilliseconds lastTick)
 
                 operationsToRun =
-                    Basics.min (Basics.max (floor (elapsedTime / 100)) 1) 3000
+                    Basics.min (Basics.max (floor (elapsedTime / 100)) 1) 600
 
                 seed0 =
                     Random.initialSeed (floor (Time.inMilliseconds time))
