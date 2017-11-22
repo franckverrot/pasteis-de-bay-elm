@@ -121,7 +121,7 @@ updateModel model =
 
         Just mod ->
             let
-                newTrust =
+                addTrust =
                     model.pasteis > ((nextTrust mod.trust) * 1000)
 
                 log =
@@ -129,8 +129,11 @@ updateModel model =
 
                 log2 =
                     Debug.log "nextTrust" ((nextTrust mod.trust) * 1000)
+
+                log3 =
+                    Debug.log "addTrust" addTrust
             in
-                case newTrust of
+                case addTrust of
                     False ->
                         Just
                             { mod
