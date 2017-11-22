@@ -42,10 +42,21 @@ type alias MegaPasteisModule =
     }
 
 
+type alias ComputingModule =
+    { trust : Int
+    , processors : Int
+    , memory : Int
+    , memoryLimit : Int
+    , operations : Int
+    , creativity : Int
+    }
+
+
 type alias SaveModel =
     { pasteis : Int
     , businessModule : BusinessModule
     , manufacturingModule : ManufacturingModule
+    , computingModule : Maybe ComputingModule
     }
 
 
@@ -55,6 +66,7 @@ type alias Model =
     , pasteis : Int
     , businessModule : BusinessModule
     , manufacturingModule : ManufacturingModule
+    , computingModule : Maybe ComputingModule
     }
 
 
@@ -69,3 +81,5 @@ type Msg
     | UpdateModel
     | BuyPasteis
     | BuyMegaPasteis
+    | AddProcessor
+    | AddMemory

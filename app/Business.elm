@@ -35,7 +35,7 @@ view model =
         Card.view
             [ Elevation.e2
             , css "margin" "4px 8px"
-            , css "width" "400px"
+            , css "width" "100%"
             ]
             [ Card.title
                 [ css "flex-direction" "column" ]
@@ -60,7 +60,7 @@ view model =
                             , Button.ripple
                             , Options.onClick LowerPrice
                             ]
-                            [ text "-"
+                            [ text "Lower"
                             ]
                         , Button.render Mdl
                             [ 1, 2 ]
@@ -69,7 +69,7 @@ view model =
                             , Button.ripple
                             , Options.onClick RaisePrice
                             ]
-                            [ text "+"
+                            [ text "Raise"
                             ]
                         , text
                             (" Price per Pastel: $ "

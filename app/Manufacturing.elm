@@ -37,7 +37,7 @@ view model =
         Card.view
             [ Elevation.e2
             , css "margin" "4px 8px"
-            , css "width" "400px"
+            , css "width" "100%"
             ]
             [ Card.title
                 [ css "flex-direction" "column" ]

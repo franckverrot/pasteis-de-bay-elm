@@ -19,6 +19,7 @@ saveToModel saveModel =
     , pasteis = saveModel.pasteis
     , businessModule = saveModel.businessModule
     , manufacturingModule = saveModel.manufacturingModule
+    , computingModule = saveModel.computingModule
     }
 
 
@@ -27,6 +28,7 @@ modelToSave model =
     { pasteis = model.pasteis
     , businessModule = model.businessModule
     , manufacturingModule = model.manufacturingModule
+    , computingModule = model.computingModule
     }
 
 

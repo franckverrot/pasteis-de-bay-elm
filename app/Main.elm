@@ -5,6 +5,7 @@ import Material
 import Material.Scheme
 import Material.Button as Button
 import Material.Options as Options exposing (css)
+import Material.Grid exposing (grid, cell, size, Device(..), Align(..), align)
 import Time exposing (Time, every, second, millisecond)
 import Random
 import FormatNumber exposing (formatFloat, formatInt, usLocale)
@@ -12,6 +13,7 @@ import Models exposing (..)
 import Utils exposing (..)
 import Business as Business
 import Manufacturing as Manufacturing
+import Computing as Computing
 
 
 main : Program (Maybe SaveModel) Model Msg
@@ -34,6 +36,7 @@ emptyModel =
     , pasteis = 0
     , businessModule = Business.init
     , manufacturingModule = Manufacturing.init
+    , computingModule = Nothing
     }
 
 
@@ -119,6 +122,28 @@ update msg model =
                     }
                         |> flip (,) Cmd.none
 
+        AddProcessor ->
+            case model.computingModule of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just computingModule ->
+                    { model
+                        | computingModule = Just (Computing.addProcessor computingModule)
+                    }
+                        |> flip (,) Cmd.none
+
+        AddMemory ->
+            case model.computingModule of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just computingModule ->
+                    { model
+                        | computingModule = Just (Computing.addMemory computingModule)
+                    }
+                        |> flip (,) Cmd.none
+
         UpdateModel ->
             ( updateModel model, Cmd.none )
 
@@ -150,23 +175,63 @@ view model =
                 ]
                 [ text "Make a Pastel" ]
             ]
-        , Options.div
-            [ css "display" "flex"
-            , css "flex-flow" "row wrap"
-            , css "align-items" "flex-end"
-            , css "margin-top" "20px"
-            ]
-            [ Options.div
-                [ css "display" "flex"
-                , css "flex-flow" "row wrap"
-                , css "justify-content" "space-between"
-                , css "align-items" "center"
-                , css "min-width" "256px"
-                , css "max-width" "400px"
-                , css "flex" "1 1 auto"
+        , grid []
+            [ cell [ size All 3 ]
+                [ Options.div
+                    [ css "display" "flex"
+                    , css "flex-flow" "row wrap"
+                    , css "align-items" "flex-end"
+                    , css "margin-top" "20px"
+                    ]
+                    [ Options.div
+                        [ css "display" "flex"
+                        , css "flex-flow" "row wrap"
+                        , css "justify-content" "space-between"
+                        , css "align-items" "center"
+                        , css "min-width" "256px"
+                        , css "flex" "1 1 auto"
+                        ]
+                        [ Business.view model
+                        , Manufacturing.view model
+                        ]
+                    ]
                 ]
-                [ Business.view model
-                , Manufacturing.view model
+            , cell [ size All 3 ]
+                [ Options.div
+                    [ css "display" "flex"
+                    , css "flex-flow" "row wrap"
+                    , css "align-items" "flex-end"
+                    , css "margin-top" "20px"
+                    ]
+                    [ Options.div
+                        [ css "display" "flex"
+                        , css "flex-flow" "row wrap"
+                        , css "justify-content" "space-between"
+                        , css "align-items" "center"
+                        , css "min-width" "256px"
+                        , css "flex" "1 1 auto"
+                        ]
+                        [ Computing.view model
+                        ]
+                    ]
+                ]
+            , cell [ size All 3 ]
+                [ Options.div
+                    [ css "display" "flex"
+                    , css "flex-flow" "row wrap"
+                    , css "align-items" "flex-end"
+                    , css "margin-top" "20px"
+                    ]
+                    [ Options.div
+                        [ css "display" "flex"
+                        , css "flex-flow" "row wrap"
+                        , css "justify-content" "space-between"
+                        , css "align-items" "center"
+                        , css "min-width" "256px"
+                        , css "flex" "1 1 auto"
+                        ]
+                        []
+                    ]
                 ]
             ]
         ]
@@ -186,6 +251,7 @@ updateModel model =
             | businessModule = businessModule
             , manufacturingModule = manufacturingModule
         }
+            |> Computing.tryMakeComputingModule
 
 
 applyTime : Model -> Time -> Model
@@ -210,7 +276,7 @@ applyTime model time =
                     (Time.inMilliseconds time) - (Time.inMilliseconds lastTick)
 
                 operationsToRun =
-                    Basics.max (floor (elapsedTime / 100)) 1
+                    Basics.min (Basics.max (floor (elapsedTime / 100)) 1) 3000
 
                 seed0 =
                     Random.initialSeed (floor (Time.inMilliseconds time))
