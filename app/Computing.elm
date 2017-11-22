@@ -57,7 +57,7 @@ view model =
                                 [ Button.colored
                                 , Button.ripple
                                 , Options.onClick AddProcessor
-                                , Options.disabled (mod.trust < 1)
+                                , Options.disabled ((mod.trust - (mod.processors + mod.memory)) < 1)
                                 ]
                                 [ text "Processors"
                                 ]
@@ -75,7 +75,7 @@ view model =
                                 [ Button.colored
                                 , Button.ripple
                                 , Options.onClick AddMemory
-                                , Options.disabled (mod.trust < 1)
+                                , Options.disabled ((mod.trust - (mod.processors + mod.memory)) < 1)
                                 ]
                                 [ text "Memory"
                                 ]
@@ -121,10 +121,19 @@ updateModel model =
 
         Just mod ->
             let
-                newTrust =
+                addTrust =
                     model.pasteis > ((nextTrust mod.trust) * 1000)
+
+                log =
+                    Debug.log "pasteis" model.pasteis
+
+                log2 =
+                    Debug.log "nextTrust" ((nextTrust mod.trust) * 1000)
+
+                log3 =
+                    Debug.log "addTrust" addTrust
             in
-                case newTrust of
+                case addTrust of
                     False ->
                         Just
                             { mod
@@ -160,28 +169,34 @@ tryMakeComputingModule model =
 
 addProcessor : ComputingModule -> ComputingModule
 addProcessor model =
-    case model.trust of
-        0 ->
-            model
+    let
+        availableTrust =
+            (model.trust - (model.processors + model.memory)) < 1
+    in
+        case availableTrust of
+            False ->
+                model
 
-        _ ->
-            { model
-                | processors = model.processors + 1
-                , trust = model.trust - 1
-            }
+            True ->
+                { model
+                    | processors = model.processors + 1
+                }
 
 
 addMemory : ComputingModule -> ComputingModule
 addMemory model =
-    case model.trust of
-        0 ->
-            model
+    let
+        availableTrust =
+            (model.trust - (model.processors + model.memory)) < 1
+    in
+        case availableTrust of
+            False ->
+                model
 
-        _ ->
-            { model
-                | memory = model.memory + 1
-                , trust = model.trust - 1
-            }
+            True ->
+                { model
+                    | memory = model.memory + 1
+                }
 
 
 makeOperations : ComputingModule -> ComputingModule
