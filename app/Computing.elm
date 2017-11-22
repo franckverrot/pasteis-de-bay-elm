@@ -18,7 +18,7 @@ init =
     , processors = 1
     , memory = 1
     , memoryLimit = 1000
-    , operations = 1000
+    , operations = 0
     , creativityEnable = False
     , creativity = 0
     }
