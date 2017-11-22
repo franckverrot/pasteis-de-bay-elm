@@ -123,6 +123,12 @@ updateModel model =
             let
                 newTrust =
                     model.pasteis > ((nextTrust mod.trust) * 1000)
+
+                log =
+                    Debug.log "pasteis" model.pasteis
+
+                log2 =
+                    Debug.log "nextTrust" ((nextTrust mod.trust) * 1000)
             in
                 case newTrust of
                     False ->
