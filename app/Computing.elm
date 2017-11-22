@@ -14,7 +14,7 @@ import FormatNumber exposing (formatFloat, formatInt, usLocale)
 
 init : ComputingModule
 init =
-    { trust = 0
+    { trust = 2
     , processors = 1
     , memory = 1
     , memoryLimit = 1000
