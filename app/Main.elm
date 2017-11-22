@@ -253,6 +253,7 @@ updateModel model =
         { model
             | businessModule = businessModule
             , manufacturingModule = manufacturingModule
+            , computingModule = computingModule
         }
             |> Computing.tryMakeComputingModule
 
