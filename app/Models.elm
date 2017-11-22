@@ -47,8 +47,9 @@ type alias ComputingModule =
     , processors : Int
     , memory : Int
     , memoryLimit : Int
-    , operations : Int
-    , creativity : Int
+    , operations : Float
+    , creativityEnable : Bool
+    , creativity : Float
     }
 
 

@@ -246,6 +246,9 @@ updateModel model =
 
         manufacturingModule =
             Manufacturing.updateModel model.manufacturingModule businessModule
+
+        computingModule =
+            Computing.updateModel model
     in
         { model
             | businessModule = businessModule
@@ -315,8 +318,19 @@ applyTime_ model ( floatList, floatList2 ) =
                     , manufacturingModule = Manufacturing.adjustdoughCost model.manufacturingModule float2
                 }
                     |> Manufacturing.makePasteis
+                    |> makeOperations
                     |> updateModel
                     |> flip applyTime_ ( floats1, floats2 )
+
+
+makeOperations : Model -> Model
+makeOperations model =
+    case model.computingModule of
+        Nothing ->
+            model
+
+        Just mod ->
+            { model | computingModule = Just (Computing.makeOperations mod) }
 
 
 setLastTick : Model -> Time -> Model

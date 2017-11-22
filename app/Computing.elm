@@ -19,6 +19,7 @@ init =
     , memory = 1
     , memoryLimit = 1000
     , operations = 1000
+    , creativityEnable = False
     , creativity = 0
     }
 
@@ -43,7 +44,13 @@ view model =
                 , Card.actions
                     [ Color.text Color.black ]
                     [ grid []
-                        [ cell [ size All 6 ]
+                        [ cell
+                            [ size All 12
+                            , align Middle
+                            ]
+                            [ text ("Next trust " ++ (formatInt usLocale ((nextTrust mod.trust) * 1000)))
+                            ]
+                        , cell [ size All 6 ]
                             [ Button.render Mdl
                                 [ 3, 1 ]
                                 model.mdl
@@ -90,7 +97,7 @@ view model =
                             ]
                             [ text
                                 ("Operations : "
-                                    ++ (formatInt usLocale mod.operations)
+                                    ++ (formatInt usLocale (floor mod.operations))
                                     ++ " / "
                                     ++ (formatInt usLocale mod.memoryLimit)
                                 )
@@ -99,18 +106,37 @@ view model =
                             [ size All 12
                             , align Middle
                             ]
-                            [ text ("Creativity : " ++ (formatInt usLocale mod.creativity))
+                            [ text ("Creativity : " ++ (formatInt usLocale (floor mod.creativity)))
                             ]
                         ]
                     ]
                 ]
 
 
-updateModel : ComputingModule -> ComputingModule
+updateModel : Model -> Maybe ComputingModule
 updateModel model =
-    { model
-        | memoryLimit = model.memory * 1000
-    }
+    case model.computingModule of
+        Nothing ->
+            Nothing
+
+        Just mod ->
+            let
+                newTrust =
+                    model.pasteis > ((nextTrust mod.trust) * 1000)
+            in
+                case newTrust of
+                    False ->
+                        Just
+                            { mod
+                                | memoryLimit = mod.memory * 1000
+                            }
+
+                    True ->
+                        Just
+                            { mod
+                                | memoryLimit = mod.memory * 1000
+                                , trust = mod.trust + 1
+                            }
 
 
 tryMakeComputingModule : Model -> Model
@@ -156,3 +182,57 @@ addMemory model =
                 | memory = model.memory + 1
                 , trust = model.trust - 1
             }
+
+
+makeOperations : ComputingModule -> ComputingModule
+makeOperations model =
+    let
+        full =
+            model.operations >= (toFloat model.memoryLimit)
+    in
+        case full of
+            True ->
+                model |> makeCreativity
+
+            False ->
+                let
+                    newOps =
+                        (toFloat model.processors) / 10
+
+                    operations =
+                        Basics.min (model.operations + newOps) (toFloat model.memoryLimit)
+                in
+                    { model | operations = operations }
+
+
+makeCreativity : ComputingModule -> ComputingModule
+makeCreativity model =
+    case model.creativityEnable of
+        False ->
+            model
+
+        True ->
+            let
+                creativitySpeed =
+                    ((logBase 10 (toFloat model.processors)) * ((toFloat model.processors) ^ 1.1)) + toFloat (model.processors - 1)
+
+                newCreativity =
+                    creativitySpeed / 400
+
+                creativity =
+                    model.creativity + newCreativity
+            in
+                { model | creativity = creativity }
+
+
+nextTrust : Int -> Int
+nextTrust x =
+    case x of
+        0 ->
+            1
+
+        1 ->
+            1
+
+        _ ->
+            nextTrust (x - 1) + nextTrust (x - 2)
